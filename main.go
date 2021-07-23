@@ -41,7 +41,7 @@ func getIP(r *http.Request) (string, error) {
         }
     }
 
-    //Get IP from RemoteAddr
+    //Get IP from RemoteAddress
     ip, _, err := net.SplitHostPort(r.RemoteAddr)
     if err != nil {
         return "", err
