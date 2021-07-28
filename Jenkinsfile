@@ -49,8 +49,6 @@ pipeline {
                            fi
                            '''
 
-                           cleanWs()
-
                        }
                  }
 
