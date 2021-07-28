@@ -40,6 +40,7 @@ pipeline {
                            
                            sh '''
                            echo "main"
+                           sed -i "s/GANTI_INI/jelek/g" abc.txt 
                            '''
 
                        }
