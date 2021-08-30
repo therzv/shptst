@@ -2,6 +2,7 @@ pipeline {
     agent any
     environment {
         CI = 'true'
+        SVC = 'getIP'
     }
 
   stages {
