@@ -6,6 +6,13 @@ pipeline {
 
   stages {
 
+           stage ('Start') {
+                 steps {
+                    slackSend (color: '#FFFF00', message: "STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL}) Comitted by: ${env.GIT_COMMITTER_NAME} Commit Hash : ${env.GIT_COMMIT}")
+
+                  }
+              } 
+
  
             stage('Unit Test') {
                   steps{
@@ -28,21 +35,21 @@ pipeline {
 
             stage('Build and Deploy Branch Development') {
 
+
+                       when {
+                         expression {
+                           return env.GIT_BRANCH == "origin/development"
+                         }
+                       } 
+
                        environment {
                                MESSAGE = "PLEASE DONT CHANGE ANYTHING IF YOU DONT UNDERSTAND"
                        }
 
                        steps {
 
-                           sh '''#!/bin/bash
-
-                           echo $GIT_BRANCH
-                           if [ $GIT_BRANCH == "origin/development" ]; then
-
+                           sh '''
                            echo "this is branch develop"
-
-
-                           fi 
                            '''
                            cleanWs ()
 
@@ -53,25 +60,21 @@ pipeline {
 
             stage('Build and Deploy Branch Staging') {
 
+                       when {
+                         expression {
+                           return env.GIT_BRANCH == "origin/staging"
+                         }
+                       } 
+
                        environment {
                                MESSAGE = "PLEASE DONT CHANGE ANYTHING IF YOU DONT UNDERSTAND"
                        }
 
                        steps {
 
-                           sh '''#!/bin/bash
-
-                           echo $GIT_BRANCH
-                           if [ $GIT_BRANCH == "origin/staging" ]; then
-
-                              HELM_CHART_DIR=/opt/helm-chart
-                              HELM_BRANCH=dev
-                              HELM_NAMESPACE=dev
-                              CLUSTER_CONTEXT=kubernetes-admin@vaf-development-cluster.local
+                           sh '''
 
                               echo "this is branch staging"
-
-
                            fi 
                            '''
                            cleanWs ()
@@ -84,22 +87,26 @@ pipeline {
 
             stage('Build and Deploy Branch Main') {
 
+
+                      agent {
+                          label "k8sprod"
+                      }
+
+                       when {
+                         expression {
+                           return env.GIT_BRANCH == "origin/main"
+                         }
+                       } 
+
                        environment {
                                MESSAGE = "PLEASE DONT CHANGE ANYTHING IF YOU DONT UNDERSTAND"
                        }
 
                        steps {
 
-                           sh '''#!/bin/bash
+                           sh '''
 
-                           echo $GIT_BRANCH
-                           if [ $GIT_BRANCH == "origin/main" ]; then
-
-
-                              echo "this is branch production, should be deployed on jenkins slave PROD label"
-
-
-                           fi 
+                              echo "this is branch production, should be build on slave production"
                            '''
                            cleanWs ()
 
@@ -129,3 +136,4 @@ pipeline {
     }
 
 }
+
