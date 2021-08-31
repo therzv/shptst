@@ -35,6 +35,10 @@ pipeline {
 
             stage('Build and Deploy Branch Development') {
 
+                      agent {
+                          label "k8sdev"
+                      }
+
 
                        when {
                          expression {
@@ -59,6 +63,10 @@ pipeline {
 
 
             stage('Build and Deploy Branch Staging') {
+
+                      agent {
+                          label "k8sdev"
+                      }
 
                        when {
                          expression {
